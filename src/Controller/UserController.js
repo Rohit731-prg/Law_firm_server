@@ -176,7 +176,7 @@ export const getUserDetailsByID = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await UserModel.find({ auth: true }).select("-password").select("-otp");
+        const users = await UserModel.find({ auth: true }).select("-password").select("-otp").populate("vehicle");
         if (users.length === 0) return res.status(400).json({ message: "No users found" });
 
         res.status(200).json({ users });

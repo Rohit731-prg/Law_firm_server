@@ -20,7 +20,7 @@ router.get("/me", verifyToken, loginWithToken);
 router.get('/sendOTP', verifyToken, sendOTP);
 router.put('/verifyOTP', verifyToken, verifyOTP);
 
-router.get("/getAllUsers", verifyToken, getAllLeads);
+router.get("/getAllLeads", verifyToken, getAllLeads);
 router.get("/getAllUsers", verifyToken, getAllUsers);
 router.get("/getUserDetailsByID/:id", verifyToken, getUserDetailsByID);
 router.get("/makeUserAuth/:id", verifyToken, makeUserAuth);

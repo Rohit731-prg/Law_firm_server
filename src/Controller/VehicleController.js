@@ -26,7 +26,7 @@ export const addVehicle = async (req, res) => {
         newVehicle.pollution = { expair_date: pollution_expair_date, docs: `${baseURL}/${file3}` };
 
         await newVehicle.save();
-        res.status(201).json({ message: "Vehicle created successfully" });
+        res.status(201).json({ message: "Vehicle created successfully", id: newVehicle._id });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
