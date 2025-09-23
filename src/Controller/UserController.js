@@ -20,9 +20,6 @@ export const registerUser = async (req, res) => {
 
         // const hashedpassword = await bcrypt.hash(password, 12);
         const hashedpassword = password;
-
-        const otp = Math.floor(Math.random() * 10000); // Generate a random 4-digit OTP
-
         const newUser = new UserModel({
             name, email, phone, password: hashedpassword, address,
             image: req.fileUrl,
@@ -30,7 +27,7 @@ export const registerUser = async (req, res) => {
             aadhar: { Number: aadhar_number },
             driving_licence: { Number: driving_licence_number },
             referal_number: { Number: referal_number, relation },
-            otp
+            vehicle
         });
         await newUser.save();
         res.status(201).json({ message: "User created successfully" });
@@ -54,7 +51,7 @@ export const verifyDocs = async (req, res) => {
         const file1Name = path.basename(req.file1);
         const file2Name = path.basename(req.file2);
         const file3Name = path.basename(req.file3);
-
+        console.log("also called");
         await UserModel.updateOne(
             { _id: id },
             {
@@ -203,6 +200,7 @@ export const updateDocs = async (req, res) => {
                 fs.unlink(filePath, (err) => {
                     if (err) {
                         console.error("Error deleting file:", err);
+                        return res.status(500).json({ message: "Error deleting file" });
                     } else {
                         console.log("File deleted successfully");
                     }
@@ -213,25 +211,32 @@ export const updateDocs = async (req, res) => {
                 res.status(200).json({ message: "Docs updated successfully" });
                 break;
             } case "tax": {
-                console.log(vehicleModel.tax)
                 const url = vehicleModel.tax.docs;
-                console.log("checking")
                 const relativePath = path.join("src", "uploads", url.split("uploads/")[1]);
                 const filePath = path.join(process.cwd(), relativePath);
                 fs.unlink(filePath, (err) => {
                     if (err) {
                         console.error("Error deleting file:", err);
+                        return res.status(500).json({ message: "Error deleting file" });
                     } else {
                         console.log("File deleted successfully");
                     }
                 });
                 const baseURL = `${req.protocol}://${req.get("host")}/uploads`;
                 const file1Name = path.basename(req.fileUrl);
-                const resp = await vehicleModel.updateOne({ _id: user.vehicle }, { $set: { tax: { 
-                    expair_date: data,
-                    docs: `${baseURL}/${file1Name}` 
-                } } });
-                console.log(resp)
+                const newID = user.vehicle;
+                await Vehicle.updateOne(
+                    { _id: newID },
+                    {
+                        $set: {
+                            tax: {
+                                expair_date: data,
+                                docs: `${baseURL}/${file1Name}`
+                            }
+                        }
+                    }
+                );
+
                 res.status(200).json({ message: "Docs updated successfully" });
                 break;
             } case "insurance": {
@@ -241,6 +246,7 @@ export const updateDocs = async (req, res) => {
                 fs.unlink(filePath, (err) => {
                     if (err) {
                         console.error("Error deleting file:", err);
+                        return res.status(500).json({ message: "Error deleting file" });
                     } else {
                         console.log("File deleted successfully");
                     }
@@ -279,19 +285,39 @@ export const getUserByExpairDate = async (req, res) => {
     const { name } = req.params;
 
     try {
-        if (!["tax", "insurance", "pollution"].includes(name)) {
+        if (!["tax", "insurance", "pollution", "driving_licence"].includes(name)) {
             return res.status(400).json({ message: "Invalid name" });
         }
         const today = new Date();
         const nextTwoMonths = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
-
+        console.log("nextTwoMonths", nextTwoMonths);
+        console.log("today", today);
         // Dynamic query (nested object field)
         const query = {
             [`${name}.expair_date`]: { $gte: today, $lte: nextTwoMonths }
         };
-        const vehicles = await Vehicle.find(query).populate("user");
-        res.status(200).json({ message: "Vehicles found", vehicles });
+        switch(name) {
+            case "driving_licence": {
+                const user = await UserModel.find(query);
+                res.status(200).json({ message: "Vehicles found", user });
+                break;
+            } case "tax": {
+                const vehicles = await Vehicle.find(query);
+                res.status(200).json({ message: "Vehicles found", vehicles });
+                break;
+            } case "insurance": {
+                const vehicles = await Vehicle.find(query);
+                res.status(200).json({ message: "Vehicles found", vehicles });
+                break;
+            } case "pollution": {
+                const vehicles = await Vehicle.find(query);
+                res.status(200).json({ message: "Vehicles found", vehicles });
+                break;
+            }
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const sendSMSBulk = async (req, res) => {}

@@ -25,7 +25,7 @@ router.get("/getAllUsers", verifyToken, getAllUsers);
 router.get("/getUserDetailsByID/:id", verifyToken, getUserDetailsByID);
 router.get("/makeUserAuth/:id", verifyToken, makeUserAuth);
 
-router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, updateDocs); // not working
-router.get("/getUserByExpairDate/:name", verifyToken, getUserByExpairDate);
+router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, updateDocs); // working but not perfectly
+router.get("/getUserByExpairDate/:name", verifyToken, getUserByExpairDate); // working but not properly tested
 
 export default router;

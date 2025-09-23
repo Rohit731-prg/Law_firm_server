@@ -17,6 +17,7 @@ const userSchema = new Schema({
         docs: ""
     }},
     driving_licence: { type: Object, default: {
+        expair_date: { type: Date },
         number: "",
         docs: ""
     }},
@@ -24,7 +25,7 @@ const userSchema = new Schema({
         number: "",
         relation: ""
     }},
-    vehicle: { type: Schema.Types.ObjectId, ref: "Vehicle" },
+    vehicle: { type: Schema.Types.ObjectId, ref: "Vehicle", require: true },
     role: { type: String, default: "user" },
     otp: { type: Number, default: "" },
     auth: { type: Boolean, default: false },
