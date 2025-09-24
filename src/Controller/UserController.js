@@ -7,8 +7,8 @@ import { generateToken } from "../Utils/JwtGenerator.js";
 import fs from "fs";
 
 export const registerUser = async (req, res) => {
-    const { name, email, phone, password, address, pan_number, aadhar_number, driving_licence_number, referal_number, relation, vehicle } = req.body;
-    if (!name || !email || !phone || !password || !address || !pan_number || !aadhar_number || !driving_licence_number || !referal_number || !relation || !vehicle) {
+    const { name, email, phone, password, address, pan_number, aadhar_number, driving_licence_number, driving_licence_expair_date, referal_number, relation, vehicle } = req.body;
+    if (!name || !email || !phone || !password || !address || !pan_number || !aadhar_number || !driving_licence_number || !driving_licence_expair_date || !referal_number || !relation || !vehicle) {
         return res.status(400).json({ message: "All fields are required" });
     }
     try {
@@ -30,7 +30,10 @@ export const registerUser = async (req, res) => {
             vehicle
         });
         await newUser.save();
-        res.status(201).json({ message: "User created successfully" });
+        await UserModel.updateOne({ _id: newUser._id }, { $set: { driving_licence: { ...newUser.driving_licence, expair_date: driving_licence_expair_date } } });
+        is_vehicle_exist.user = newUser._id;
+        await is_vehicle_exist.save();
+        res.status(201).json({ message: "User created successfully", id: newUser._id });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -285,39 +288,68 @@ export const getUserByExpairDate = async (req, res) => {
     const { name } = req.params;
 
     try {
+        // Validate name
         if (!["tax", "insurance", "pollution", "driving_licence"].includes(name)) {
             return res.status(400).json({ message: "Invalid name" });
         }
+
         const today = new Date();
         const nextTwoMonths = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
-        console.log("nextTwoMonths", nextTwoMonths);
-        console.log("today", today);
-        // Dynamic query (nested object field)
-        const query = {
-            [`${name}.expair_date`]: { $gte: today, $lte: nextTwoMonths }
-        };
-        switch(name) {
+
+        let users = [];
+
+        switch (name) {
             case "driving_licence": {
-                const user = await UserModel.find(query);
-                res.status(200).json({ message: "Vehicles found", user });
+                // Directly query users with driving_licence expiring
+                users = await UserModel.find({
+                    "driving_licence.expair_date": { $gte: today, $lte: nextTwoMonths },
+                    auth: true  // Only auth users
+                }).populate("vehicle");
                 break;
-            } case "tax": {
-                const vehicles = await Vehicle.find(query);
-                res.status(200).json({ message: "Vehicles found", vehicles });
-                break;
-            } case "insurance": {
-                const vehicles = await Vehicle.find(query);
-                res.status(200).json({ message: "Vehicles found", vehicles });
-                break;
-            } case "pollution": {
-                const vehicles = await Vehicle.find(query);
-                res.status(200).json({ message: "Vehicles found", vehicles });
+            }
+            case "tax":
+            case "insurance":
+            case "pollution": {
+                // Query vehicles with the nested field in range
+                const vehicles = await Vehicle.find({
+                    [`${name}.expair_date`]: { $gte: today, $lte: nextTwoMonths }
+                }).populate({
+                    path: "user",
+                    match: { auth: true }  // Only auth users
+                });
+
+                // Remove vehicles where user did not match (auth:false → user is null)
+                const filteredVehicles = vehicles.filter(v => v.user);
+
+                // Extract unique users
+                users = filteredVehicles
+                    .map(v => v.user)
+                    .filter((u, index, self) => u && self.findIndex(obj => obj._id.equals(u._id)) === index);
+
                 break;
             }
         }
+
+        return res.status(200).json({ message: "Users found", data: users });
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error);
+        return res.status(500).json({ message: error.message });
     }
 };
 
-export const sendSMSBulk = async (req, res) => {}
+
+export const deleteUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await UserModel.findById(id);
+        if (!user) return res.status(400).json({ message: "User not found" });
+
+        await user.remove();
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const sendSMSBulk = async (req, res) => { }

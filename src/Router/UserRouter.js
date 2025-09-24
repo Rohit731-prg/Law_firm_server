@@ -1,7 +1,19 @@
 import express from "express";
 import { upload, uploadImage } from "../Middleware/Multer.js";
 import {
-    getAllLeads, getAllUsers, getUserByExpairDate, getUserDetailsByID, login, loginWithToken, logout, registerUser, sendOTP, updateDocs, verifyDocs, verifyOTP
+    deleteUser,
+    getAllLeads,
+    getAllUsers,
+    getUserByExpairDate,
+    getUserDetailsByID,
+    login,
+    loginWithToken,
+    logout,
+    registerUser,
+    sendOTP,
+    updateDocs,
+    verifyDocs,
+    verifyOTP
 } from "../Controller/UserController.js";
 import { mapFilesToReq, uploadMiddleware } from "../Middleware/UploadUserDocs.js";
 import { verifyToken } from "../Middleware/JwtMiddleware.js";
@@ -24,8 +36,9 @@ router.get("/getAllLeads", verifyToken, getAllLeads);
 router.get("/getAllUsers", verifyToken, getAllUsers);
 router.get("/getUserDetailsByID/:id", verifyToken, getUserDetailsByID);
 router.get("/makeUserAuth/:id", verifyToken, makeUserAuth);
+router.get("/deleteUser/:id", verifyToken, deleteUser);
 
-router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, updateDocs); // working but not perfectly
+router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, updateDocs);
 router.get("/getUserByExpairDate/:name", verifyToken, getUserByExpairDate); // working but not properly tested
 
 export default router;

@@ -18,7 +18,7 @@ const VehicleSchema = new Schema({
     pollution: {
         expair_date: { type: Date },
         docs: { type: String }
-    }
+    },
 }, {
     timestamps: true
 });

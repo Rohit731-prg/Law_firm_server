@@ -2,8 +2,10 @@ import Vehicle from "../Model/VehicleModel.js";
 import path from "path";
 
 export const addVehicle = async (req, res) => {
-    const { number, engine_number, chasis_number, brand, mode, tax_expair_date, insurence_expair_date, pollution_expair_date } = req.body;
-    if (!number || !engine_number || !chasis_number || !brand || !mode || !tax_expair_date || !insurence_expair_date || !pollution_expair_date ) {
+    const {
+        number, engine_number, chasis_number, brand, mode, tax_expair_date, insurence_expair_date, pollution_expair_date
+    } = req.body;
+    if (!number || !engine_number || !chasis_number || !brand || !mode || !tax_expair_date || !insurence_expair_date || !pollution_expair_date) {
         return res.status(400).json({ message: "All fields are required" });
     }
     try {
@@ -24,6 +26,7 @@ export const addVehicle = async (req, res) => {
         newVehicle.tax = { expair_date: tax_expair_date, docs: `${baseURL}/${file1}` };
         newVehicle.insurance = { expair_date: insurence_expair_date, docs: `${baseURL}/${file2}` };
         newVehicle.pollution = { expair_date: pollution_expair_date, docs: `${baseURL}/${file3}` };
+        newVehicle.user
 
         await newVehicle.save();
         res.status(201).json({ message: "Vehicle created successfully", id: newVehicle._id });
