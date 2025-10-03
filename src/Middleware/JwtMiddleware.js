@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import AdminModel from "../Model/AdminModel.js";
+import UserModel from "../Model/UserModel.js";
 
 export const verifyToken = async (req, res, next) => {
     try {
@@ -13,6 +14,7 @@ export const verifyToken = async (req, res, next) => {
         } else if (decoded.role == "user") {
             const user = await UserModel.findOne({ _id: decoded.id, phone: decoded.phone }).select("-password");
             if (!user) return res.status(401).json({ message: "Unauthorized" });
+            if (!user.auth) return res.status(401).json({ message: "Unauthorized" });
             req.user = user;
         }
         next();

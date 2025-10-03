@@ -2,7 +2,7 @@ import path from "path";
 import UserModel from "../Model/UserModel.js";
 import bcrypt from "bcryptjs";
 import Vehicle from "../Model/VehicleModel.js";
-import { sendSMS } from "../Utils/Twilio.js";
+import { bulkSms, sendSMS } from "../Utils/Twilio.js";
 import { generateToken } from "../Utils/JwtGenerator.js";
 import fs from "fs";
 
@@ -352,4 +352,57 @@ export const deleteUser = async (req, res) => {
     }
 }
 
-export const sendSMSBulk = async (req, res) => { }
+export const sendSMSBulk = async (req, res) => {
+    const { name } = req.params;
+    try {
+        if (!["tax", "insurance", "pollution", "driving_licence"].includes(name)) {
+            return res.status(400).json({ message: "Invalid name" });
+        }
+
+        const today = new Date();
+        const nextTwoMonths = new Date(today.getFullYear(), today.getMonth() + 2, today.getDate());
+
+        let users = [];
+
+        switch (name) {
+            case "driving_licence": {
+                // Directly query users with driving_licence expiring
+                users = await UserModel.find({
+                    "driving_licence.expair_date": { $gte: today, $lte: nextTwoMonths },
+                    auth: true  // Only auth users
+                }).populate("vehicle");
+                break;
+            }
+            case "tax":
+            case "insurance":
+            case "pollution": {
+                // Query vehicles with the nested field in range
+                const vehicles = await Vehicle.find({
+                    [`${name}.expair_date`]: { $gte: today, $lte: nextTwoMonths }
+                }).populate({
+                    path: "user",
+                    match: { auth: true }  // Only auth users
+                });
+
+                // Remove vehicles where user did not match (auth:false → user is null)
+                const filteredVehicles = vehicles.filter(v => v.user);
+
+                // Extract unique users
+                users = filteredVehicles
+                    .map(v => v.user)
+                    .filter((u, index, self) => u && self.findIndex(obj => obj._id.equals(u._id)) === index);
+
+                break;
+            }
+        }
+
+        let numbers = users.map(user => user.phone);
+        let message = `Hello ${name} is expiring in 2 months`;
+
+        await bulkSms(numbers, message);
+
+        res.status(200).json({ message: "SMS sent successfully" });
+    } catch (error) {
+        res.status.json({ message: error.message });
+    }
+}

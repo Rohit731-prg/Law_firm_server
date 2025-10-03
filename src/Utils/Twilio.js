@@ -15,3 +15,18 @@ export const sendSMS = async (phone, messageData) => {
         throw error.message;
     }
 }
+
+export const bulkSms = async (numbers, message) => {
+    try {
+        for (let number of numbers) {
+            await client.messages.create({
+                body: message,
+                from: twilioConfig.fromPhone,
+                to: number,
+            });
+            console.log(`SMS sent to ${number}`);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
