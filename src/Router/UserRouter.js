@@ -19,7 +19,7 @@ import { mapFilesToReq, uploadMiddleware } from "../Middleware/UploadUserDocs.js
 import { verifyToken } from "../Middleware/JwtMiddleware.js";
 import { makeUserAuth } from "../Controller/AdminController.js";
 import { mapFileToReq, uploadSingleMiddleware } from "../Middleware/UploadSingleDocs.js";
-import { logger } from "../Middleware/Logger.js";
+import { logger } from "../Middleware/logger.js";
 
 const router = express.Router();
 

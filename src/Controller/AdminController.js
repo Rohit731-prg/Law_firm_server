@@ -80,6 +80,19 @@ export const getAllAdmins = async (req, res) => {
     }
 }
 
+export const deleteAdmin = async (req, res) => {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: "Admin ID is required" });
+    try {
+        const admin = await AdminModel.findById(id);
+        if (!admin) return res.status(400).json({ message: "Admin not found" });
+        await AdminModel.findByIdAndDelete(id);
+        res.status(200).json({ message: "Admin deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export const loginWithTokne = async (req, res) => {
     try {
         const admin = req.admin;
