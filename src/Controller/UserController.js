@@ -54,7 +54,6 @@ export const verifyDocs = async (req, res) => {
         const file1Name = path.basename(req.file1);
         const file2Name = path.basename(req.file2);
         const file3Name = path.basename(req.file3);
-        console.log("also called");
         await UserModel.updateOne(
             { _id: id },
             {
@@ -120,12 +119,12 @@ export const login = async (req, res) => {
 
         // const is_match = await bcrypt.compare(password, user.password);
         const is_match = password === user.password;
-        if (!is_match) return res.status(400).json({ message: "Invalid credentials" });
+        if (!is_match) return res.status(400).json({ message: "Password does not match" });
 
         const token = generateToken(user._id, user.phone, user.role);
         res.cookie("token", token, { httpOnly: true });
 
-        res.status(200).json({ message: "Login successful", user });
+        res.status(200).json({ message: "Login successful", user, token });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -153,7 +152,7 @@ export const logout = async (req, res) => {
 
 export const getAllLeads = async (req, res) => {
     try {
-        const leads = await UserModel.find({ auth: false }).select("-password").select("-otp");
+        const leads = await UserModel.find({ auth: false, note : "" }).select("-password").select("-otp");
         if (leads.length === 0) return res.status(400).json({ message: "No leads found" });
 
         res.status(200).json({ leads });
@@ -338,14 +337,13 @@ export const getUserByExpairDate = async (req, res) => {
     }
 };
 
-
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     try {
         const user = await UserModel.findById(id);
         if (!user) return res.status(400).json({ message: "User not found" });
 
-        await user.remove();
+        await user.deleteOne({ _id: id });
         res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });

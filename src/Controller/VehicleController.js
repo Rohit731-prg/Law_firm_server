@@ -29,7 +29,6 @@ export const addVehicle = async (req, res) => {
         newVehicle.user
 
         await newVehicle.save();
-        console.log(newVehicle._id);
         res.status(201).json({ message: "Vehicle created successfully", id: newVehicle._id });
     } catch (error) {
         res.status(500).json({ message: error.message });

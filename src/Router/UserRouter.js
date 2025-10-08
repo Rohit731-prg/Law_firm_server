@@ -19,6 +19,7 @@ import { mapFilesToReq, uploadMiddleware } from "../Middleware/UploadUserDocs.js
 import { verifyToken } from "../Middleware/JwtMiddleware.js";
 import { makeUserAuth } from "../Controller/AdminController.js";
 import { mapFileToReq, uploadSingleMiddleware } from "../Middleware/UploadSingleDocs.js";
+import { logger } from "../Middleware/Logger.js";
 
 const router = express.Router();
 
@@ -35,10 +36,11 @@ router.put('/verifyOTP', verifyToken, verifyOTP);
 router.get("/getAllLeads", verifyToken, getAllLeads);
 router.get("/getAllUsers", verifyToken, getAllUsers);
 router.get("/getUserDetailsByID/:id", verifyToken, getUserDetailsByID);
-router.get("/makeUserAuth/:id", verifyToken, makeUserAuth);
-router.get("/deleteUser/:id", verifyToken, deleteUser);
+router.put("/makeUserAuth/:id", verifyToken, logger, makeUserAuth);
+router.delete("/deleteUser/:id", verifyToken, logger, deleteUser);
+router.put("/unauthUser/:id", logger, verifyToken, )
 
-router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, updateDocs);
+router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, logger, updateDocs);
 router.get("/getUserByExpairDate/:name", verifyToken, getUserByExpairDate); // working but not properly tested
 
 export default router;

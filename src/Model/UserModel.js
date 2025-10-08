@@ -7,7 +7,7 @@ const userSchema = new Schema({
     password: { type: String, require: true },
     image: { type: String, require: true },
     blood_group: { type: String, require: true },
-    address: { type: String, require: true },
+    address: { type: Object, require: true},
     pan: { type: Object, default: {
         number: "",
         docs: { type: String }
@@ -30,6 +30,7 @@ const userSchema = new Schema({
     otp: { type: Number, default: "" },
     auth: { type: Boolean, default: false },
     verify: { type: Boolean, default: false },
+    note: { type: String, default: "" },
 }, {
     timestamps: true
 });
