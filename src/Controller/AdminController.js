@@ -2,6 +2,8 @@ import AdminModel from "../Model/AdminModel.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../Utils/JwtGenerator.js";
 import UserModel from "../Model/UserModel.js";
+import Sos from "../Model/SosModel.js";
+import Info from "../Model/InfoModel.js";
 
 
 export const createAdmin = async (req, res) => {
@@ -42,7 +44,7 @@ export const login = async (req, res) => {
     }
 }
 
-export const logout = async () => {
+export const logout = async (req, res) => {
     try {
         res.clearCookie("token");
         res.status(200).json({ message: "Logout successful" });
@@ -117,6 +119,24 @@ export const rejectUser = async (req, res) => {
         user.note = note;
         await user.save();
         res.status(200).json({ message: "User rejected successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const basicInfo = async (req, res) => {
+    try {
+        const user = await UserModel.countDocuments({ auth: true });
+        const lead = await UserModel.countDocuments({ auth: false });
+        const sos = await Sos.countDocuments({ status: "pending" });
+        const external = await Info.countDocuments();
+
+        const sosList = await Sos.find().limit(5).sort({ createdAt: -1 }).populate("user");
+        const externalList = await Info.find().limit(5).sort({ createdAt: -1 });
+        const userList = await UserModel.find({ auth: true }).limit(5).sort({ createdAt: -1 });
+        const leadList = await UserModel.find({ auth: false }).limit(5).sort({ createdAt: -1 });
+
+        res.status(200).json({ user, lead, sos, external, sosList, externalList, userList, leadList });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
