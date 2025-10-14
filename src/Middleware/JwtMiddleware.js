@@ -37,8 +37,6 @@ export const verifyToken = async (req, res, next) => {
 
             req.user = user;
         }
-
-        // ✅ 4. Continue
         next();
     } catch (error) {
         console.error("Token verification error:", error);

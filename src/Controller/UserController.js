@@ -7,11 +7,17 @@ import { generateToken } from "../Utils/JwtGenerator.js";
 import fs from "fs";
 
 export const registerUser = async (req, res) => {
-    const { name, email, phone, password, address, pan_number, aadhar_number, driving_licence_number, driving_licence_expair_date, referal_number, relation, vehicle } = req.body;
-    if (!name || !email || !phone || !password || !address || !pan_number || !aadhar_number || !driving_licence_number || !driving_licence_expair_date || !referal_number || !relation || !vehicle) {
+    const { name, email, phone, password, address, blood_group, pan_number, aadhar_number, driving_licence_number, driving_licence_expair_date, referal_number, relation, vehicle } = req.body;
+    if (!name || !email || !phone || !password || !address || !blood_group || !pan_number || !aadhar_number || !driving_licence_number || !driving_licence_expair_date || !referal_number || !relation || !vehicle) {
         return res.status(400).json({ message: "All fields are required" });
     }
     try {
+        let addressObj = {};
+        if (typeof address === 'string') {
+            addressObj = JSON.parse(address);
+        } else {
+            addressObj = address;
+        }
         const is_exist = await UserModel.findOne({ phone });
         if (is_exist) return res.status(400).json({ message: "User already exist" });
 
@@ -21,11 +27,11 @@ export const registerUser = async (req, res) => {
         // const hashedpassword = await bcrypt.hash(password, 12);
         const hashedpassword = password;
         const newUser = new UserModel({
-            name, email, phone, password: hashedpassword, address,
+            name, email, phone, password: hashedpassword, address: addressObj, blood_group,
             image: req.fileUrl,
             pan: { Number: pan_number },
             aadhar: { Number: aadhar_number },
-            driving_licence: { Number: driving_licence_number },
+            driving_licence: { Number: driving_licence_number, expair_date: driving_licence_expair_date },
             referal_number: { Number: referal_number, relation },
             vehicle
         });
@@ -399,6 +405,19 @@ export const sendSMSBulk = async (req, res) => {
 
         await bulkSms(numbers, message);
 
+        res.status(200).json({ message: "SMS sent successfully" });
+    } catch (error) {
+        res.status.json({ message: error.message });
+    }
+}
+
+export const sendSingleNotice = async (req, res) => {
+    const { phone, message } = req.body;
+    try {
+        const user = await UserModel.findOne({ phone });
+        if (!user) return res.status(400).json({ message: "User not found" });
+
+        await sendSMS(phone, message);
         res.status(200).json({ message: "SMS sent successfully" });
     } catch (error) {
         res.status.json({ message: error.message });

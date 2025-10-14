@@ -7,6 +7,8 @@ const sosSchema = new Schema({
     type: { type: String, require: true, enum: ["send", "receive"] },
     vehicle: { type: Schema.Types.ObjectId, ref: "Vehicle" },
     reply: { type: String },
+    location: { type: Object },
+    location_data: { type: Object },
 }, {
     timestamps: true
 });

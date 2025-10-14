@@ -127,14 +127,14 @@ export const rejectUser = async (req, res) => {
 export const basicInfo = async (req, res) => {
     try {
         const user = await UserModel.countDocuments({ auth: true });
-        const lead = await UserModel.countDocuments({ auth: false });
+        const lead = await UserModel.countDocuments({ auth: false, note : "" });
         const sos = await Sos.countDocuments({ status: "pending" });
         const external = await Info.countDocuments();
 
         const sosList = await Sos.find().limit(5).sort({ createdAt: -1 }).populate("user");
         const externalList = await Info.find().limit(5).sort({ createdAt: -1 });
         const userList = await UserModel.find({ auth: true }).limit(5).sort({ createdAt: -1 });
-        const leadList = await UserModel.find({ auth: false }).limit(5).sort({ createdAt: -1 });
+        const leadList = await UserModel.find({ auth: false, note : "" }).limit(5).sort({ createdAt: -1 });
 
         res.status(200).json({ user, lead, sos, external, sosList, externalList, userList, leadList });
     } catch (error) {
