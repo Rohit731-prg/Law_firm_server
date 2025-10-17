@@ -10,6 +10,7 @@ import UserRouter from "./Router/UserRouter.js";
 import VehicleRouter from "./Router/VehicleRouter.js";
 import SosRouter from "./Router/SosRouter.js";
 import InfoRouter from "./Router/InfoRouter.js";
+import NoticeRouter from "./Router/NoticeRouter.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -41,6 +42,7 @@ app.use("/api/user", UserRouter);
 app.use("/api/vehicle", VehicleRouter);
 app.use("/api/sos", SosRouter);
 app.use("/api/info", InfoRouter);
+app.use("/api/notice", NoticeRouter);
 
 // DB + Server
 connectDB().then(() => {

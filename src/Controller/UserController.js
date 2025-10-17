@@ -357,7 +357,8 @@ export const deleteUser = async (req, res) => {
 }
 
 export const sendSMSBulk = async (req, res) => {
-    const { name } = req.params;
+    const { name } = req.body;
+    console.log(name);
     try {
         if (!["tax", "insurance", "pollution", "driving_licence"].includes(name)) {
             return res.status(400).json({ message: "Invalid name" });
@@ -417,7 +418,8 @@ export const sendSingleNotice = async (req, res) => {
         const user = await UserModel.findOne({ phone });
         if (!user) return res.status(400).json({ message: "User not found" });
 
-        await sendSMS(phone, message);
+        const result = await sendSMS(phone, message);
+        console.log(result);
         res.status(200).json({ message: "SMS sent successfully" });
     } catch (error) {
         res.status.json({ message: error.message });
