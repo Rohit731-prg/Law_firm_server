@@ -7,8 +7,8 @@ import Info from "../Model/InfoModel.js";
 
 
 export const createAdmin = async (req, res) => {
-    const { name, email, phone, password } = req.body;
-    if (!name || !email || !phone || !password ) return res.status(400).json({ message: "All fields are required" });
+    const { name, email, phone, password, role } = req.body;
+    if (!name || !email || !phone || !password || !role ) return res.status(400).json({ message: "All fields are required" });
     if (!req.fileUrl) return res.status(400).json({ message: "Image is required" });
     try {
         const is_exist = await AdminModel.findOne({ email });
@@ -16,7 +16,7 @@ export const createAdmin = async (req, res) => {
 
         const hasedPassword = await bcrypt.hash(password, 12);
         const newAdmin = new AdminModel({
-            name, email, phone, password: hasedPassword, image: req.fileUrl
+            name, email, phone, password: hasedPassword, image: req.fileUrl, role
         });
 
         await newAdmin.save();

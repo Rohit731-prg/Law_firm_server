@@ -158,7 +158,7 @@ export const logout = async (req, res) => {
 
 export const getAllLeads = async (req, res) => {
     try {
-        const leads = await UserModel.find({ auth: false, note : "" }).select("-password").select("-otp");
+        const leads = await UserModel.find({ auth: false, note: "" }).select("-password").select("-otp");
         if (leads.length === 0) return res.status(400).json({ message: "No leads found" });
 
         res.status(200).json({ leads });

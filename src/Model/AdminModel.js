@@ -6,7 +6,7 @@ const adminSchema = new mongoose.Schema({
     phone: { type: String, require: true },
     password: { type: String, require: true },
     image: { type: String, require: true },
-    role: { type: String, default: "admin" },
+    role: { type: String, require: true },
 }, {
     timestamps: true
 });

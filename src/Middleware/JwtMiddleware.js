@@ -17,10 +17,10 @@ export const verifyToken = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // ✅ 3. Check role and attach user/admin to request
-        if (decoded.role === "admin") {
+        if (decoded.role === "admin" || decoded.role === "employee") {
             const admin = await AdminModel.findOne({
                 _id: decoded.id,
-                email: decoded.email || decoded.phone, // fallback if using email/phone
+                email: decoded.email || decoded.phone,
             }).select("-password");
 
             if (!admin) return res.status(401).json({ message: "Unauthorized - Invalid admin" });
