@@ -7,4 +7,4 @@ const router = express.Router();
 router.post("/registerVehicle", uploadMiddlewareForDocs, mapVFilesToReq, addVehicle);
 router.get("/getVehicleByID/:id", getDataById);
 
-export default router;
+export default router; 
