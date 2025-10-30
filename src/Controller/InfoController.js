@@ -74,3 +74,55 @@ export const updateInfo = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const getInfoByState = async (req, res) => {
+    const { state } = req.body;
+    if (!state) return res.status(400).json({ message: "All fields are required" });
+    try {
+        const info = await Info.find({ state });
+        if (!info) return res.status(400).json({ message: "Info not found" });
+        if (info.length == 0) return res.status(400).json({ message: "No info found" });
+        res.status(200).json({ info });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const getInfoByDistrict = async (req, res) => {
+    const { district } = req.body;
+    if (!district) return res.status(400).json({ message: "All fields are required" });
+    try {
+        const info = await Info.find({ district });
+        if (!info) return res.status(400).json({ message: "Info not found" });
+        if (info.length == 0) return res.status(400).json({ message: "No info found" });
+        res.status(200).json({ info });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const getInfoBySub_Divition = async (req, res) => {
+    const { sub_divition } = req.body;
+    if (!sub_divition) return res.status(400).json({ message: "All fields are required" });
+    try {
+        const info = await Info.find({ sub_divition });
+        if (!info) return res.status(400).json({ message: "Info not found" });
+        if (info.length == 0) return res.status(400).json({ message: "No info found" });
+        res.status(200).json({ info });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const getInfoByPolice_Station = async (req, res) => {
+    const { police_station } = req.body;
+    if (!police_station) return res.status(400).json({ message: "All fields are required" });
+    try {
+        const info = await Info.find({ police_station });
+        if (!info) return res.status(400).json({ message: "Info not found" });
+        if (info.length == 0) return res.status(400).json({ message: "No info found" });
+        res.status(200).json({ info });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
