@@ -8,7 +8,7 @@ import {
     getInfoByDistrict,
     getInfoByPolice_Station,
     getInfoByState,
-    getInfoBySub_Divition,
+    getInfoBySub_Division,
     updateInfo
 } from "../Controller/InfoController.js";
 import { logger } from "../Middleware/logger.js";
@@ -22,7 +22,7 @@ router.post("/filterByValue", verifyToken, filterByvalue);
 router.put("/updateInfo/:id", verifyToken, logger, updateInfo);
 
 router.post("/getAllInfoByState", verifyToken, getInfoByState);
-router.post("/getAllInfoBySub_divition", verifyToken, getInfoBySub_Divition);
+router.post("/getAllInfoBySub_divition", verifyToken, getInfoBySub_Division);
 router.post("/getAllInfoByDistrict", verifyToken, getInfoByDistrict);
 router.post("/getAllInfoByPolice_station", verifyToken, getInfoByPolice_Station);
 

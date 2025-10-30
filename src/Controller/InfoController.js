@@ -1,13 +1,13 @@
 import Info from "../Model/InfoModel.js";
 
 export const createInfo = async (req, res) => {
-    const { type, basic_info, state, district, sub_divition, police_station } = req.body;
-    if (!type || !basic_info || !state || !district || !sub_divition || !police_station) return res.status(400).json({ message: "All fields are required" });
+    const { type, basic_info, state, district, sub_division, police_station } = req.body;
+    if (!type || !basic_info || !state || !district || !sub_division || !police_station) return res.status(400).json({ message: "All fields are required" });
     try {
-        const is_exist = await Info.findOne({ type, district, sub_divition, police_station });
+        const is_exist = await Info.findOne({ type, district, sub_division, police_station });
         if (is_exist) return res.status(400).json({ message: "Info already exist" });
         const newInfo = new Info({
-            type, basic_info, state, district, sub_divition, police_station
+            type, basic_info, state, district, sub_division, police_station
         });
         await newInfo.save();
         res.status(201).json({ message: "Info created successfully"});
@@ -57,15 +57,15 @@ export const filterByvalue = async (req, res) => {
 
 export const updateInfo = async (req, res) => {
     const { id } = req.params;
-    const { basic_info, district, sub_divition, police_station } = req.body;
-    if (!basic_info || !district || !sub_divition || !police_station) return res.status(400).json({ message: "All fields are required" });
+    const { basic_info, district, sub_division, police_station } = req.body;
+    if (!basic_info || !district || !sub_division || !police_station) return res.status(400).json({ message: "All fields are required" });
     try {
         const info = await Info.findById(id);
         if (!info) return res.status(400).json({ message: "Info not found" });
 
         info.basic_info = basic_info;
         info.district = district;
-        info.sub_divition = sub_divition;
+        info.sub_division = sub_division;
         info.police_station = police_station;
 
         await info.save();
@@ -101,11 +101,11 @@ export const getInfoByDistrict = async (req, res) => {
     }
 }
 
-export const getInfoBySub_Divition = async (req, res) => {
-    const { sub_divition } = req.body;
-    if (!sub_divition) return res.status(400).json({ message: "All fields are required" });
+export const getInfoBySub_Division = async (req, res) => {
+    const { sub_division } = req.body;
+    if (!sub_division) return res.status(400).json({ message: "All fields are required" });
     try {
-        const info = await Info.find({ sub_divition });
+        const info = await Info.find({ sub_division });
         if (!info) return res.status(400).json({ message: "Info not found" });
         if (info.length == 0) return res.status(400).json({ message: "No info found" });
         res.status(200).json({ info });
