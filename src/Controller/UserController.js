@@ -248,7 +248,7 @@ export const updateDocs = async (req, res) => {
                 res.status(200).json({ message: "Docs updated successfully" });
                 break;
             } case "insurance": {
-                const url = user.insurance.docs;
+                const url = vehicleModel.insurance.docs;
                 const relativePath = path.join("src", "uploads", url.split("uploads/")[1]);
                 const filePath = path.join(process.cwd(), relativePath);
                 fs.unlink(filePath, (err) => {
@@ -261,11 +261,22 @@ export const updateDocs = async (req, res) => {
                 });
                 const baseURL = `${req.protocol}://${req.get("host")}/uploads`;
                 const file1Name = path.basename(req.fileUrl);
-                await vehicleModel.updateOne({ _id: user.vehicle }, { $set: { insurance: { expair_date: data, docs: `${baseURL}/${file1Name}` } } });
+                const newID = user.vehicle;
+                await Vehicle.updateOne(
+                    { _id: newID },
+                    {
+                        $set: {
+                            insurance: {
+                                expair_date: data,
+                                docs: `${baseURL}/${file1Name}`
+                            }
+                        }
+                    }
+                );
                 res.status(200).json({ message: "Docs updated successfully" });
                 break;
             } case "pollution": {
-                const url = user.pollution.docs;
+                const url = vehicleModel.pollution.docs;
                 const relativePath = path.join("src", "uploads", url.split("uploads/")[1]);
                 const filePath = path.join(process.cwd(), relativePath);
                 fs.unlink(filePath, (err) => {
@@ -277,7 +288,18 @@ export const updateDocs = async (req, res) => {
                 });
                 const baseURL = `${req.protocol}://${req.get("host")}/uploads`;
                 const file1Name = path.basename(req.fileUrl);
-                await vehicleModel.updateOne({ _id: user.vehicle }, { $set: { pollution: { expair_date: data, docs: `${baseURL}/${file1Name}` } } });
+                const newID = user.vehicle;
+                await Vehicle.updateOne(
+                    { _id: newID },
+                    {
+                        $set: {
+                            pollution: {
+                                expair_date: data,
+                                docs: `${baseURL}/${file1Name}`
+                            }
+                        }
+                    }
+                );
                 res.status(200).json({ message: "Docs updated successfully" });
                 break;
             } default: {
