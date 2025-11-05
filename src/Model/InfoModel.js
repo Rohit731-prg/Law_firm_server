@@ -5,7 +5,7 @@ const InfoSchema = new Schema({
     basic_info: { type: Object, require: true },
     state: { type: String, require: true },
     district: { type: String, require: true },
-    sub_divition: { type: String, require: true },
+    sub_division: { type: String, require: true },
     police_station: { type: String, require: true },
 }, {
     timestamps: true
