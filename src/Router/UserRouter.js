@@ -41,6 +41,6 @@ router.delete("/deleteUser/:id", verifyToken, logger, deleteUser);
 router.put("/unauthUser/:id", logger, verifyToken, )
 
 router.put("/updateDocs/:id", verifyToken, uploadSingleMiddleware, mapFileToReq, logger, updateDocs);
-router.get("/getUserByExpairDate/:name", verifyToken, getUserByExpairDate); // working but not properly tested
+router.get("/getUserByExpairDate/:name", verifyToken, getUserByExpairDate);
 
 export default router;

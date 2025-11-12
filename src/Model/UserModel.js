@@ -1,10 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
-    name: { type: String, require: true },
-    email: { type: String, require: true },
+    name: { type: String, require: true },//
+    email: { type: String, require: true },//
     phone: { type: String, require: true },
-    password: { type: String, require: true },
+    password: { type: String, require: true },//
     image: { type: String, require: true },
     blood_group: { type: String, require: true },
     address: { type: Object, require: true},

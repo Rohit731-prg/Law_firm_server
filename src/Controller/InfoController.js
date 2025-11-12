@@ -126,3 +126,38 @@ export const getInfoByPolice_Station = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const defaultDetails = async (req, res) => {
+    const userAddress = req.user.address;
+    console.log("userAddress: ", userAddress);
+    try {
+        const infos = await Info.find({
+            state: userAddress.state,
+            district: userAddress.district,
+            sub_division: userAddress.sub_division,
+        });
+        if(!infos) return res.status(400).json({ message: "Info not found" });
+        res.status(200).json({ infos });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export const defaultDetailsWithFilter = async (req, res) => {
+    const { type } = req.body;
+    if (!type) return res.status(400).json({ message: "All fields are required" });
+    if (!["Hospital", "Fire Brigade", "Ambulance", "Electricity", "Garage", "Police Station"].includes(type)) return res.status(400).json({ message: "type not found" });
+    const userAddress = req.user.address;
+    try {
+        const infos = await Info.find({
+            state: userAddress.state,
+            district: userAddress.district,
+            sub_division: userAddress.sub_division,
+            type
+        });
+        if(!infos) return res.status(400).json({ message: "Info not found" });
+        res.status(200).json({ infos });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+} 

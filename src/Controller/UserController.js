@@ -424,7 +424,7 @@ export const sendSMSBulk = async (req, res) => {
         }
 
         let numbers = users.map(user => user.phone);
-        let message = `Hello ${name} is expiring in 2 months`;
+        let message = `This is a courteous reminder that one or more of your services ${name} are set to expire in approximately 2 months. Kindly review and take the necessary steps to renew or update them in time to avoid any disruptions.`;
 
         await bulkSms(numbers, message);
 
