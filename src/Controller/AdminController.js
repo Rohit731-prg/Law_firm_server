@@ -128,15 +128,15 @@ export const basicInfo = async (req, res) => {
     try {
         const user = await UserModel.countDocuments({ auth: true });
         const lead = await UserModel.countDocuments({ auth: false, note : "" });
-        const sos = await Sos.countDocuments({ status: "pending" });
+        const total_employee = await AdminModel.countDocuments({ role: "employee" });
         const external = await Info.countDocuments();
 
-        const sosList = await Sos.find().limit(5).sort({ createdAt: -1 }).populate("user");
+        const employeeList = await AdminModel.find({ role: "employee" }).limit(5).sort({ createdAt: -1 });
         const externalList = await Info.find().limit(5).sort({ createdAt: -1 });
         const userList = await UserModel.find({ auth: true }).limit(5).sort({ createdAt: -1 });
         const leadList = await UserModel.find({ auth: false, note : "" }).limit(5).sort({ createdAt: -1 });
-
-        res.status(200).json({ user, lead, sos, external, sosList, externalList, userList, leadList });
+        
+        res.status(200).json({ user, lead, total_employee, external, employeeList, externalList, userList, leadList });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -2,8 +2,8 @@ import express from "express";
 import { basicInfo, createAdmin, deleteAdmin, getAllAdmins, login, loginWithTokne, logout, rejectUser } from "../Controller/AdminController.js";
 import { verifyToken } from "../Middleware/JwtMiddleware.js";
 import { upload, uploadImage } from "../Middleware/Multer.js";
-import { logger } from "../Middleware/Logger.js";
 import { deleteUser } from "../Controller/UserController.js";
+import { logger } from "../Middleware/logger.js";
 
 const router = express.Router();
 

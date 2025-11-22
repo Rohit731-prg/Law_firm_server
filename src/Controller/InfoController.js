@@ -58,6 +58,7 @@ export const filterByvalue = async (req, res) => {
 export const updateInfo = async (req, res) => {
     const { id } = req.params;
     const { basic_info, district, sub_division, police_station } = req.body;
+    console.log(basic_info, district, sub_division, police_station);
     if (!basic_info || !district || !sub_division || !police_station) return res.status(400).json({ message: "All fields are required" });
     try {
         const info = await Info.findById(id);
