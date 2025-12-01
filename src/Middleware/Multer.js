@@ -11,7 +11,7 @@ export const uploadImage = async (req, res, next) => {
         const streamUpload = (fileBuffer) => {
             return new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
-{
+                    {
                         resource_type: 'image',
                         folder: 'Low'
                     },
