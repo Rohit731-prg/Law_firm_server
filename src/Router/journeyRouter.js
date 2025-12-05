@@ -5,14 +5,17 @@ import {
     getJourney,
     getJourneys,
     pushLocation,
+    singleTransfer,
     startJourney
 } from "../Controller/JourneyController.js";
 const router = express.Router();
 
 router.post("/createJourney", verifyToken, startJourney);
-router.put("/endJourney", verifyToken, endJourney);
+router.put("/endJourney", endJourney);
 router.put("/pushLocation", verifyToken, pushLocation);
-router.get("/getJourneys", verifyToken, getJourneys);
+router.get("/getJourneys/:id", verifyToken, getJourneys);
 router.get("/getJourneyByID/:id", verifyToken, getJourney);
+
+router.post("/singleTranfer/:id", verifyToken, singleTransfer);
 
 export default router;
