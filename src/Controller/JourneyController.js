@@ -118,13 +118,14 @@ export const singleTransfer = async (req, res) => {
     try {
         const journey = await journeyModel.findById(id);
         if (!journey) return res.status(400).json({ message: "Journey not found" });
-        // if (!journey.end) return res.status(400).json({ message: "This journey is already ended" });
+        if (!journey.end) return res.status(400).json({ message: "This journey is not ended" });
         if (journey.is_delete) return res.status(400).json({ message: "This journey is not for transfer" });
 
         const transfer = await axios.post("http://localhost:2000/api/pushOne", {
             data: journey.toObject()
         });
-        // await journeyModel.deleteOne({ _id: id });
+        
+        await journeyModel.deleteOne({ _id: id });
         return res.status(200).json({ message: "Journey transfered successfully", transfer: transfer.data });
     } catch (error) {
         console.log(error);
